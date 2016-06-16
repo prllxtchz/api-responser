@@ -14,6 +14,10 @@
 namespace PrllxTchz\ApiResponser;
 
 
+/**
+ * Class ApiResponser
+ * @package PrllxTchz\ApiResponser
+ */
 class ApiResponser
 {
 
@@ -23,9 +27,38 @@ class ApiResponser
     protected $statesCode = 200;
 
     /**
+     * @var array
+     */
+    protected $headers;
+
+    protected $accessHeaders = [
+        'Access-Control-Allow-Headers'     => 'Content-Type',
+        'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE, PUT',
+        'Access-Control-Allow-Origin'      => 'http://genie.cli',
+        'Access-Control-Max-Age'           => '600',
+        'Access-Control-Allow-Credentials' => 'true'
+    ];
+
+    /**
+     * @return array
+     */
+    private function getHeaders ()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param array $headers
+     */
+    private function setHeaders ($headers)
+    {
+        $this->headers = $headers;
+    }
+
+    /**
      * @return mixed
      */
-    public function getStatesCode()
+    private function getStatesCode ()
     {
         return $this->statesCode;
     }
@@ -34,20 +67,11 @@ class ApiResponser
      * @param mixed $statesCode
      * @return $this
      */
-    public function setStatesCode($statesCode)
+    private function setStatesCode ($statesCode)
     {
         $this->statesCode = $statesCode;
 
         return $this;
-    }
-
-    /**
-     * @param string $msg
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function respondNotFound($msg = 'Not Found')
-    {
-        return $this->setStatesCode('404')->respondWithError($msg);
     }
 
 
@@ -55,28 +79,15 @@ class ApiResponser
      * @param $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respond($data)
+    public function respond ($data, $status = 200, $headers = [ ], $addAccessHeaders = TRUE)
     {
-        return response()->json($data, $this->getStatesCode());
+        $this->setStatesCode($status);
+        $this->setHeaders($headers);
+
+        $addAccessHeaders ? $this->setHeaders($this->accessHeaders) : NULL;
+
+        return response()->json($data, $this->getStatesCode(), $this->getHeaders());
     }
 
-    public function respondWithError($msg)
-    {
-        return $this->respond([
-            'error' => $msg
-        ]);
-    }
 
-
-    /**
-     * @param $msg
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function respondCreated($msg)
-    {
-        return $this->setStatesCode(201)->respond([
-            'message' => $msg
-        ]);
-    }
-
-} 
+}
