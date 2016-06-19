@@ -34,7 +34,6 @@ class ApiResponser
     protected $accessHeaders = [
         'Access-Control-Allow-Headers'     => 'Content-Type',
         'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE, PUT',
-        'Access-Control-Allow-Origin'      => 'http://genie.cli',
         'Access-Control-Max-Age'           => '600',
         'Access-Control-Allow-Credentials' => 'true'
     ];
@@ -42,7 +41,7 @@ class ApiResponser
     /**
      * @return array
      */
-    private function getHeaders ()
+    private function getHeaders()
     {
         return $this->headers;
     }
@@ -50,7 +49,7 @@ class ApiResponser
     /**
      * @param array $headers
      */
-    private function setHeaders ($headers)
+    private function setHeaders($headers)
     {
         $this->headers = $headers;
     }
@@ -58,7 +57,7 @@ class ApiResponser
     /**
      * @return mixed
      */
-    private function getStatesCode ()
+    private function getStatesCode()
     {
         return $this->statesCode;
     }
@@ -67,11 +66,18 @@ class ApiResponser
      * @param mixed $statesCode
      * @return $this
      */
-    private function setStatesCode ($statesCode)
+    private function setStatesCode($statesCode)
     {
         $this->statesCode = $statesCode;
 
         return $this;
+    }
+
+    private function setOrigin()
+    {
+        $this->accessHeaders = array_merge($this->accessHeaders,
+            [ 'Access-Control-Allow-Origin' => config('app.origin') ]
+        );
     }
 
 
@@ -79,14 +85,19 @@ class ApiResponser
      * @param $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respond ($data, $status = 200, $headers = [ ], $addAccessHeaders = TRUE)
+    public function respond($data, $status = 200, $headers = [ ], $addAccessHeaders = true)
     {
         $this->setStatesCode($status);
         $this->setHeaders($headers);
+        $this->setOrigin(); // Set the origin from the config(ENV)
 
-        $addAccessHeaders ? $this->setHeaders($this->accessHeaders) : NULL;
+        $addAccessHeaders ? $this->setHeaders($this->accessHeaders) : null;
 
         return response()->json($data, $this->getStatesCode(), $this->getHeaders());
+    }
+
+    public function ss(){
+
     }
 
 
