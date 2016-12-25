@@ -5,21 +5,19 @@
  * Contact: (+94)77 9436364
  * Date: 5/25/16
  * Time: 3:40 PM
- *
  * File Name: ApiResponser.php
  * Project: genie
- * Copyright: Any unauthorised broadcasting, public performance, copying or re-recording will constitute an infringement of copyright.
+ * Copyright: Any unauthorised broadcasting, public performance, copying or re-recording will constitute an
+ * infringement of copyright.
  */
 
 namespace PrllxTchz\ApiResponser;
-
 
 /**
  * Class ApiResponser
  * @package PrllxTchz\ApiResponser
  */
-class ApiResponser
-{
+class ApiResponser {
 
     /**
      * @var int
@@ -41,24 +39,21 @@ class ApiResponser
     /**
      * @return array
      */
-    private function getHeaders()
-    {
+    private function getHeaders() {
         return $this->headers;
     }
 
     /**
      * @param array $headers
      */
-    private function setHeaders($headers)
-    {
+    private function setHeaders( $headers ) {
         $this->headers = $headers;
     }
 
     /**
      * @return mixed
      */
-    private function getStatesCode()
-    {
+    private function getStatesCode() {
         return $this->statesCode;
     }
 
@@ -66,39 +61,39 @@ class ApiResponser
      * @param mixed $statesCode
      * @return $this
      */
-    private function setStatesCode($statesCode)
-    {
+    private function setStatesCode( $statesCode ) {
         $this->statesCode = $statesCode;
 
         return $this;
     }
 
-    private function setOrigin()
-    {
-        $this->accessHeaders = array_merge($this->accessHeaders,
-            [ 'Access-Control-Allow-Origin' => config('app.origin') ]
+    /**
+     * Add any additional headers to be sent.
+     */
+    private function setAdditionalHeaders() {
+        $this->accessHeaders = array_merge( $this->accessHeaders,
+            [
+                'X-Frame-Options'             => 'DENY',
+                'Access-Control-Allow-Origin' => config( 'app.origin' )
+            ]
         );
     }
 
-
     /**
-     * @param $data
+     * @param       $data
+     * @param int   $status
+     * @param array $headers
+     * @param bool  $addAccessHeaders
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respond($data, $status = 200, $headers = [ ], $addAccessHeaders = true)
-    {
-        $this->setStatesCode($status);
-        $this->setHeaders($headers);
-        $this->setOrigin(); // Set the origin from the config(ENV)
+    public function respond( $data, $status = 200, $headers = [], $addAccessHeaders = TRUE ) {
+        $this->setStatesCode( $status );
+        $this->setHeaders( $headers );
+        $this->setAdditionalHeaders();
 
-        $addAccessHeaders ? $this->setHeaders($this->accessHeaders) : null;
+        $addAccessHeaders ? $this->setHeaders( $this->accessHeaders ) : NULL;
 
-        return response()->json($data, $this->getStatesCode(), $this->getHeaders());
+        return response()->json( $data, $this->getStatesCode(), $this->getHeaders() );
     }
-
-    public function ss(){
-
-    }
-
 
 }
