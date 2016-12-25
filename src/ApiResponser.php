@@ -32,7 +32,7 @@ class ApiResponser
     protected $headers;
 
     protected $accessHeaders = [
-        'Access-Control-Allow-Headers'     => 'Content-Type',
+        'Access-Control-Allow-Headers'     => 'Content-Type, Auth-Token',
         'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE, PUT',
         'Access-Control-Max-Age'           => '600',
         'Access-Control-Allow-Credentials' => 'true'
